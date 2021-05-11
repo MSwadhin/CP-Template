@@ -287,3 +287,26 @@ int query(int k) { // kth smallest subset xor
 		}
 	return mask;
 }
+//Thomas algorithm to solve tri-digonal system of equations in O(n)
+//Trigonal Eqn : A[i]*X[i-1] + B[i]*X[i] + C[i]*X[i+1] = D[i] [1...n]
+// Usually A[1]=C[n]=0
+#define LD long double
+struct equation{
+    LD a, b, c, d;
+    equation(){}
+    equation(LD a, LD b, LD c, LD d=0.0):
+        a(a), b(b), c(c), d(d){}
+};
+vector<LD> thomas_algorithm(int n,vector<struct equation>ar){
+    ar[0].c = ar[0].c / ar[0].b;
+    ar[0].d = ar[0].d / ar[0].b;
+    for (int i = 1; i < n; i++){
+        LD v = 1.0 / (ar[i].b - ar[i].a * ar[i - 1].c);
+        ar[i].c = ar[i].c * v;
+        ar[i].d = (ar[i].d - ar[i].a * ar[i - 1].d) * v;
+    }
+    for (int i=n-2;i>=0;i--) ar[i].d = ar[i].d - ar[i].c * ar[i + 1].d;
+    vector <LD> res;
+    for (int i = 0; i < n; i++) res.push_back(ar[i].d);
+    return res;
+}
